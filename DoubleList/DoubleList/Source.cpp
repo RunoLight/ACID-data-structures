@@ -9,9 +9,11 @@
 #include <iostream>
 #include <string>
 #include "CLinkedList.hpp"  
+#include "Iterator.cpp"
 
 #define CATCH_CONFIG_MAIN 
 #include "catch.hpp"
+
 
 
 TEST_CASE("LinkedList sample", "[CLinkedList]") {
