@@ -21,35 +21,27 @@ template<typename ValueType>
 class Node
 {
 public:
-
-    template<typename>
-    friend class CLinkedList;
-
-    template<typename>
-    friend class ListIterator;
+    template<typename> friend class CLinkedList;
+    template<typename> friend class ListIterator;
 
     using value_type = ValueType;
     using iterator = ListIterator<value_type>;
 
     Node() = default;
-    ~Node() = default; ;
+    ~Node() = default;
     Node(ValueType value, int ref_count)
         : val(std::move(value)), prev(this), next(this), deleted(false), ref_count(ref_count) {}
     Node(ValueType value, CLinkedList<value_type>* list) : Node(value, 2) {}
     Node(const Node<ValueType>&) = delete;
 
     void operator=(const Node<ValueType>&) = delete;
-
 private:
     value_type val;
     Node<value_type>* prev;
     Node<value_type>* next;
     bool deleted;
     int ref_count;
-
 };
-
-
 
 
 template<typename ValueType>
@@ -60,9 +52,7 @@ public:
     using value_type = ValueType;
     using iterator = ListIterator<value_type>;
 
-    template<typename>
-    friend class ListIterator;
-
+    template<typename> friend class ListIterator;
 
     CLinkedList() : head(nullptr), tail(nullptr), m_size(0) {
         tail = new Node<value_type>();
