@@ -8,7 +8,7 @@
 #include <memory>
 #include <iostream>
 #include <string>
-#include "CLinkedList.hpp"  
+//#include "CLinkedList.hpp"  
 #include "Iterator.cpp"
 
 #define CATCH_CONFIG_MAIN 
@@ -60,6 +60,10 @@ TEST_CASE("LinkedList sample", "[CLinkedList]") {
 
         it2++;
         REQUIRE(it != it2);
+        REQUIRE(it.getRefCount() == 3);
+        REQUIRE(it2.getRefCount() == 3);
+        it++;
+        REQUIRE(it.getRefCount() == 4);
 
     }
     SECTION("push back/push front/insert") {

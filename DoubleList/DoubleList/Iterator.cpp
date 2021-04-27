@@ -1,4 +1,5 @@
 #pragma once
+
 #include "CLinkedList.hpp"
 
 template<typename ValueType>
@@ -15,11 +16,11 @@ public:
 
 
     ListIterator()noexcept = default;
-    ListIterator(const  ListIterator& other) : ptr(other.ptr)//, list(other.list)
+    ListIterator(const  ListIterator& other) : ptr(other.ptr), list(other.list)
     {
         CLinkedList<ValueType>::inc_ref_count(ptr);
     }
-    explicit ListIterator(Node<value_type>* _new_ptr) : ptr(_new_ptr)//, list(_list)
+    ListIterator(Node<value_type>* _new_ptr, CLinkedList<value_type>* _list) : ptr(_new_ptr), list(_list)
     {
         CLinkedList<ValueType>::inc_ref_count(ptr);
     }
@@ -27,12 +28,9 @@ public:
     ~ListIterator() {
         if (!ptr) return;
 
-        if (ptr->ref_count == 1) {
-            CLinkedList<ValueType>::dec_ref_count(ptr);
+        CLinkedList<ValueType>::dec_ref_count(ptr);
+        if (ptr->ref_count == 0) {
             ptr = nullptr;
-        }
-        else {
-            CLinkedList<ValueType>::dec_ref_count(ptr);
         }
     }
 
@@ -62,11 +60,11 @@ public:
     ListIterator& operator++() {
         if (!ptr->next) throw (std::out_of_range("Invalid index"));
 
-        *this = this->ptr->next;
+        *this = ListIterator(this->ptr->next, list);
 
         if (ptr) {
             while (this->ptr->deleted && ptr->next) {
-                *this = this->ptr->next;
+                *this = ListIterator(this->ptr->next, list);
             }
         }
 
@@ -81,24 +79,27 @@ public:
         ListIterator new_ptr(*this);
 
         if (new_ptr.ptr->next) {
-            *this = new_ptr.ptr->next;
+
+            *this = ListIterator(new_ptr.ptr->next, list);
+
             while (ptr->deleted && ptr->next) {
-                *this = this->ptr->next;
+                *this = ListIterator(this->ptr->next, list);
             }
         }
 
-        return new_ptr.ptr;
+        //return new_ptr.ptr;
+        return ListIterator(new_ptr.ptr, list);
     }
 
     // prefix --
     ListIterator& operator--() {
         if (!ptr->prev->prev) throw std::out_of_range("Invalid index");
 
-        *this = this->ptr->prev;
+        *this = ListIterator(this->ptr->prev, list);
 
         if (ptr) {
             while (this->ptr->deleted && ptr->prev) {
-                *this = this->ptr->prev;
+                *this = ListIterator(this->ptr->prev, list);
             }
         }
 
@@ -112,12 +113,14 @@ public:
         ListIterator new_ptr(*this);
 
         if (new_ptr.ptr->prev) {
-            *this = new_ptr.ptr->prev;
+            *this = ListIterator(new_ptr.ptr->prev, list);
             while (ptr->deleted && ptr->prev)
-                *this = this->ptr->prev;
+            {
+                *this = ListIterator(this->ptr->prev, list);
+            }
         }
 
-        return new_ptr.ptr;
+        return ListIterator(new_ptr.ptr, list);
     }
 
     friend bool operator==(const ListIterator<ValueType>& a, const ListIterator<ValueType>& b) {
@@ -130,6 +133,11 @@ public:
 
     operator bool() const {
         return ptr;
+    }
+
+    int getRefCount()
+    {
+        return ptr->ref_count;
     }
 
 private:
