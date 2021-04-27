@@ -74,7 +74,6 @@ public:
         inc_ref_count(head);
         inc_ref_count(tail);
         inc_ref_count(head);
-
     }
 
     CLinkedList(const CLinkedList& other) = delete;
@@ -87,7 +86,6 @@ public:
 
     ~CLinkedList() {
         Node<value_type>* current = head;
-
         while (current != nullptr)
         {
             Node<value_type>* next = current->next;
@@ -99,7 +97,6 @@ public:
     static void dec_ref_count(Node<value_type>* ptr) {
         if (!ptr) return;
         ptr->ref_count--;
-
         if (ptr->ref_count == 0) {
             if (ptr->next) dec_ref_count(ptr->next);
             if (ptr->prev) dec_ref_count(ptr->prev);
@@ -110,9 +107,7 @@ public:
 
     static void inc_ref_count(Node<value_type>* ptr) {
         if (!ptr) return;
-
         ptr->ref_count++;
-
     }
 
     CLinkedList& operator=(const CLinkedList& other) = delete;
@@ -123,10 +118,8 @@ public:
     }
      
     void push_back(value_type&& value) {
-
-        iterator it(tail);
+        iterator it(tail, this);
         inserts(it,value);
-
     }
 
     void push_front(const value_type& value) {
@@ -134,14 +127,12 @@ public:
     }
 
     void push_front(value_type&& value) {
-
-        iterator it(head->next);
+        iterator it(head->next, this);
         inserts(it, value);
-
     }
 
     iterator erase(iterator position) {
-        auto output = position.ptr->next;
+        auto output = iterator(position.ptr->next, this);
 
         inc_ref_count(position.ptr->next);
         inc_ref_count(position.ptr->prev);
@@ -167,12 +158,10 @@ public:
         dec_ref_count(position.ptr);
 
         return output;
-
     }
 
     iterator inserts(iterator ptr, value_type value) {
         if (!ptr) return ptr;
-            
         Node<ValueType>* node = new Node<value_type>{ std::move(value), 2 };
             
         node->prev = ptr.ptr->prev;
@@ -180,44 +169,35 @@ public:
         ptr.ptr->prev->next = node;
         ptr.ptr->prev = node;
             
-        iterator it(node);
-            
+        iterator it(node, this);
         m_size++;
         return it;
-
     }
 
     iterator begin() noexcept {
-        iterator ptr(head->next);
-
+        iterator ptr(head->next, this);
         return ptr;
     }
     iterator end() noexcept { 
-        iterator ptr(tail);
-      
+        iterator ptr(tail, this);
         return ptr;
 
     }
 
     bool empty() noexcept {
         return begin() == end();
-
     }
 
     void clear() noexcept {
-        iterator current = head->next;
-
-        while (current != tail)
+        iterator current(head->next, this);
+        while (current != iterator(tail, this))
         {
             current = erase(current);
-
         }
-
     }
 
     size_type size() const noexcept {
         return m_size;
-
     }
 
 private:
@@ -225,6 +205,5 @@ private:
     Node<ValueType>* tail;
     std::queue<Node<ValueType>*> deleted_nodes;
     size_type m_size;
-
 };
 
