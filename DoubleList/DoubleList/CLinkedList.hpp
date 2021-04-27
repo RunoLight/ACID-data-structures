@@ -30,8 +30,7 @@ public:
 
     Node() = default;
     ~Node() = default;
-    Node(ValueType value, int ref_count)
-        : val(std::move(value)), prev(this), next(this), deleted(false), ref_count(ref_count) {}
+    Node(ValueType value, int ref_count) : val(std::move(value)), prev(this), next(this), deleted(false), ref_count(ref_count) {}
     Node(ValueType value, CLinkedList<value_type>* list) : Node(value, 2) {}
     Node(const Node<ValueType>&) = delete;
 
@@ -72,13 +71,11 @@ public:
     CLinkedList(std::initializer_list<value_type> l):CLinkedList() {
         for (auto i = l.begin(); i < l.end(); i++)
             push_back(*i);
-
     }
 
     ~CLinkedList() {
         Node<value_type>* current = head;
-        while (current != nullptr)
-        {
+        while (current != nullptr) {
             Node<value_type>* next = current->next;
             delete current;
             current = next;
@@ -115,7 +112,6 @@ public:
             nodesToDelete.pop();
             delete (toTheGraveyard);
         }
-
     }
 
     static void inc_ref_count(Node<value_type>* ptr) {
@@ -194,7 +190,6 @@ public:
     iterator end() noexcept { 
         iterator ptr(tail, this);
         return ptr;
-
     }
 
     bool empty() noexcept {
@@ -203,8 +198,7 @@ public:
 
     void clear() noexcept {
         iterator current(head->next, this);
-        while (current != iterator(tail, this))
-        {
+        while (current != iterator(tail, this)) {
             current = erase(current);
         }
     }
