@@ -86,11 +86,33 @@ public:
 
     static void dec_ref_count(Node<value_type>* ptr) {
         if (!ptr) return;
+
         ptr->ref_count--;
-        if (ptr->ref_count == 0) {
-            if (ptr->next) dec_ref_count(ptr->next);
-            if (ptr->prev) dec_ref_count(ptr->prev);
-            delete (ptr);
+
+        if (ptr->ref_count != 0) {
+            return;
+        }
+
+        std::queue<Node<value_type>*> nodesToDelete;
+        nodesToDelete.push(ptr);
+
+        while (!nodesToDelete.empty()) {
+            auto current = nodesToDelete.front();
+
+            // Check if next node needs to be deleted
+            auto nextNode = current->next;
+            nextNode->ref_count--;
+            if (nextNode->ref_count == 0) nodesToDelete.push(nextNode);
+
+            // Check if prev node needs to be deleted
+            auto prevNode = current->next;
+            prevNode->ref_count--;
+            if (prevNode->ref_count == 0) nodesToDelete.push(prevNode);
+
+            // Delete current node
+            auto toTheGraveyard = nodesToDelete.front();
+            nodesToDelete.pop();
+            delete (toTheGraveyard);
         }
 
     }
