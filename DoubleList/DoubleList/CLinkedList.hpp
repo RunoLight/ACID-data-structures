@@ -11,6 +11,7 @@
 #include <stdexcept>
 
 // Эта сука ебаная точно работает сейчас
+// Предположим есть ссылка на лист в итераторе ебаном
 
 template<typename ValueType>
 class ListIterator;
