@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <functional>
 #include <utility>
@@ -10,6 +10,7 @@
 #include <memory>
 #include <stdexcept>
 
+// Эта сука ебаная точно работает сейчас
 
 template<typename ValueType>
 class ListIterator;
