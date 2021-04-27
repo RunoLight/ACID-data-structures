@@ -619,3 +619,5 @@ $RECYCLE.BIN/
 *.msi
 *.msm
 *.msp
+DoubleList/DoubleList/DoubleList.vcxproj
+DoubleList/DoubleList/DoubleList.vcxproj.filters
